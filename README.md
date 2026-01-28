@@ -1,4 +1,4 @@
-# ProfilePilot – LinkedIn AI Coach
+# CareerLens AI – AI Coach for LinkedIn Profile
 
 A Chrome extension that analyzes LinkedIn profiles using Google's Gemini API
 and provides actionable improvement suggestions.
