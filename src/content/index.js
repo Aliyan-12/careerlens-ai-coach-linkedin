@@ -10,9 +10,12 @@ function getSectionHTML(selector) {
 
 function scrapeProfile() {
   return {
-    headline: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUTopcard']"),
-    aboutSection: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUAbout']"),
-    experienceSection: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUExperienceTopLevelSection']"),
+    // headline: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUTopcard']"),
+    // aboutSection: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUAbout']"),
+    // experienceSection: getSectionHTML("section[componentkey='com.linkedin.sdui.profile.card.refACoAADqNqd8BdT_a7PUftpAiS3e6g7_geH_sUkUExperienceTopLevelSection']"),
+    headline: getSectionHTML("section[componentkey*='profile.card'][componentkey*='Topcard']"),
+    aboutSection: getSectionHTML("section[componentkey*='profile.card'][componentkey*='About']"),
+    experienceSection: getSectionHTML("section[componentkey$='ExperienceTopLevelSection']"),
     url: window.location.href
   };
 }
