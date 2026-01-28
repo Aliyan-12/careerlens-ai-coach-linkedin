@@ -12,5 +12,8 @@ document.getElementById("analyze").onclick = async () => {
   });
 
   console.log(response.result);
-  document.getElementById("output").textContent = response.result;
+  document.getElementById("profile").textContent =
+    response.structuredProfile || "no structure generated.";
+  document.getElementById("output").textContent =
+    response.analysis || "No analysis generated.";
 };
