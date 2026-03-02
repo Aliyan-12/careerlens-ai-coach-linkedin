@@ -1,10 +1,11 @@
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.type === "ANALYZE_WITH_GEMINI") {
-    runTwoStepAnalysis(msg.payload).then(sendResponse)
+    runTwoStepAnalysis(msg.payload).then(sendResponse);
     return true;
   }
 });
-const API_KEY = 'xxx';
+
+const API_KEY = 'xxxx';
 const GEMINI_URL =
   "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent";
 
@@ -16,9 +17,14 @@ async function structureProfile(rawProfile) {
 
     You have to follow the below schema:
     schema: {
+      headline: {
+        name: full name of the person,
+        title: current headline or professional title,
+        location: city or region if available
+      },
       about: {
         summary,
-        keyPoints (2-4 only) donot include for low quality profiles.
+        keyPoints (2-4 only) do not include for low quality profiles.
       },
       experience: [
         {
@@ -29,6 +35,8 @@ async function structureProfile(rawProfile) {
         }
       ]
     }
+
+    IMPORTANT: Return ONLY valid JSON, no markdown, no code blocks, no extra text.
 
     RAW Profile DATA:
     ${JSON.stringify(rawProfile, null, 2)}
@@ -46,18 +54,56 @@ async function structureProfile(rawProfile) {
   const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
   const cleanedJSON = extractJSON(rawText);
 
-  return JSON.parse(cleanedJSON);
+  try {
+    return JSON.parse(cleanedJSON);
+  } catch (e) {
+    console.error("Failed to parse structured profile:", e);
+    return { about: { summary: "Could not parse profile data." }, experience: [] };
+  }
 }
 
 async function analyzeStructuredProfile(structuredProfile) {
   const prompt = `
-    You are a LinkedIn profile optimization expert.
+    You are a LinkedIn profile optimization expert and scoring system.
 
-    Analyze the structured profile below and provide:
-    1. Headline improvement suggestions
-    2. About section rewrite advice
-    3. Experience bullet improvements
-    4. Overall positioning feedback
+    Analyze the structured profile below and return a JSON response.
+
+    IMPORTANT: Return ONLY valid JSON. No markdown code blocks, no extra text.
+
+    JSON Schema to follow exactly:
+    {
+      "overallScore": <number 0-100>,
+      "categories": {
+        "headline": {
+          "score": <number 0-100>,
+          "tips": ["<actionable tip 1>", "<actionable tip 2>"]
+        },
+        "about": {
+          "score": <number 0-100>,
+          "tips": ["<actionable tip 1>", "<actionable tip 2>"]
+        },
+        "experience": {
+          "score": <number 0-100>,
+          "tips": ["<actionable tip 1>", "<actionable tip 2>"]
+        },
+        "skills": {
+          "score": <number 0-100>,
+          "tips": ["<actionable tip 1>", "<actionable tip 2>"]
+        }
+      },
+      "headlineSuggestions": ["<2-3 suggested headline rewrites>"],
+      "aboutRewrite": "<a concise, improved rewrite of the about section>",
+      "topStrengths": ["<strength 1>", "<strength 2>", "<strength 3>"],
+      "topImprovements": ["<priority improvement 1>", "<priority improvement 2>", "<priority improvement 3>"]
+    }
+
+    Scoring Guide:
+    - 90-100: Outstanding profile, competitive for top roles
+    - 70-89: Good profile with some areas to improve
+    - 50-69: Average, needs meaningful improvements
+    - Below 50: Significant work needed
+
+    Be specific and actionable in all tips and suggestions.
 
     STRUCTURED PROFILE:
     ${JSON.stringify(structuredProfile, null, 2)}
@@ -72,11 +118,26 @@ async function analyzeStructuredProfile(structuredProfile) {
   });
 
   const data = await res.json();
+  const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "{}";
+  const cleanedJSON = extractJSON(rawText);
 
-  return (
-    data.candidates?.[0]?.content?.parts?.[0]?.text ||
-    "No analysis generated."
-  );
+  try {
+    return JSON.parse(cleanedJSON);
+  } catch (e) {
+    console.error("Failed to parse analysis JSON:", e);
+    return {
+      overallScore: 50,
+      categories: {
+        headline: { score: 50, tips: [] },
+        about: { score: 50, tips: [] },
+        experience: { score: 50, tips: [] },
+        skills: { score: 50, tips: [] }
+      },
+      headlineSuggestions: [],
+      topStrengths: ["Profile contains some content"],
+      topImprovements: ["Could not fully analyze - please try again"]
+    };
+  }
 }
 
 async function runTwoStepAnalysis(rawProfile) {
@@ -92,7 +153,6 @@ async function runTwoStepAnalysis(rawProfile) {
 function extractJSON(text) {
   if (!text) return "{}";
 
-  // Remove ```json and ``` wrappers if present
   const cleaned = text
     .replace(/```json/g, "")
     .replace(/```/g, "")
@@ -100,28 +160,3 @@ function extractJSON(text) {
 
   return cleaned;
 }
-
-// async function analyzeProfile(profile) {
-//   const prompt = `You are a LinkedIn profile optimization expert.
-
-// Profile:
-// ${JSON.stringify(profile, null, 2)}
-
-// Give actionable suggestions to improve this profile.`;
-
-//   const res = await fetch(
-//     `${GEMINI_URL}?key=AIzaSyA1H2fwgC3YtC9zBp3VSBa-pH-1CRpS_6s`,
-//     {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({
-//         contents: [{ parts: [{ text: prompt }] }]
-//       })
-//     }
-//   );
-
-//   const data = await res.json();
-//   return {
-//     result: data.candidates?.[0]?.content?.parts?.[0]?.text || "No response"
-//   };
-// }

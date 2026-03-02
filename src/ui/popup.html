@@ -1,9 +1,84 @@
 <!DOCTYPE html>
-<html>
-  <body>
-    <button id="analyze">Analyze Profile</button>
-    <pre id="profile"></pre>
-    <pre id="output"></pre>
-    <script src="popup.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 26 26" fill="none">
+        <circle cx="11" cy="11" r="8" stroke="white" stroke-width="2.5" fill="none"/>
+        <line x1="17" y1="17" x2="23" y2="23" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+        <circle cx="11" cy="11" r="3.5" fill="white" opacity="0.3"/>
+      </svg>
+      <span>CareerLens AI</span>
+    </div>
+    <span class="badge">Beta</span>
+  </div>
+
+  <!-- Initial State -->
+  <div id="initial-state" class="initial-state">
+    <div class="hero-icon">
+      <svg viewBox="0 0 36 36" fill="none">
+        <path d="M18 3C18 3 20.5 10 21 12C22 12 29 12 29 12L23 16.5L25 24L18 19.5L11 24L13 16.5L7 12H15L18 3Z" fill="#0a66c2"/>
+      </svg>
+    </div>
+    <h2>Analyze Your Profile</h2>
+    <p>Get an AI-powered profile score with actionable recommendations to strengthen your LinkedIn presence.</p>
+    <button id="analyze" class="btn-primary">
+      <svg viewBox="0 0 16 16" fill="none">
+        <path d="M8 1l1.8 5.4H15l-4.2 3.1 1.6 5-4.4-3.2L3.6 14.5l1.6-5L1 6.4h5.2L8 1z" fill="currentColor"/>
+      </svg>
+      Analyze Profile
+    </button>
+    <p class="note">Navigate to any LinkedIn profile first</p>
+  </div>
+
+  <!-- Loading State -->
+  <div id="loading-state" class="loading-state hidden">
+    <div class="loading-spinner"></div>
+    <h3>Analyzing Profile</h3>
+    <div class="loading-steps">
+      <div class="loading-step" data-step="0">
+        <span class="step-icon">1</span>
+        <span>Extracting profile data</span>
+      </div>
+      <div class="loading-step" data-step="1">
+        <span class="step-icon">2</span>
+        <span>Structuring information</span>
+      </div>
+      <div class="loading-step" data-step="2">
+        <span class="step-icon">3</span>
+        <span>Running AI analysis</span>
+      </div>
+      <div class="loading-step" data-step="3">
+        <span class="step-icon">4</span>
+        <span>Generating recommendations</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Results (rendered dynamically by popup.js) -->
+  <div id="results-state" class="results-state hidden"></div>
+
+  <!-- Error State -->
+  <div id="error-state" class="error-state hidden">
+    <div class="error-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="10" stroke="#cc1016" stroke-width="2"/>
+        <line x1="12" y1="7" x2="12" y2="13" stroke="#cc1016" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="16.5" r="1" fill="#cc1016"/>
+      </svg>
+    </div>
+    <h3>Something went wrong</h3>
+    <p id="error-message">Please make sure you're on a LinkedIn profile page and try again.</p>
+    <button id="retry" class="btn-secondary">Try Again</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
 </html>
