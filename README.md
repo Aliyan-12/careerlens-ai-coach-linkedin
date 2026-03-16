@@ -12,5 +12,3 @@ and provides actionable improvement suggestions.
 
 Replace YOUR_API_KEY in src/background/index.js
 
-## Demo
-[./demos/demo-latest.mp4]
