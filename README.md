@@ -14,4 +14,7 @@ Replace YOUR_API_KEY in src/background/index.js
 
 ## Demo
 
+![Demo](./demos/demo-preview.gif)
+
+Full video:
 [Watch the demo](./demos/demo-latest.mp4)
