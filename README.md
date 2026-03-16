@@ -11,3 +11,6 @@ and provides actionable improvement suggestions.
 5. Select the project root folder
 
 Replace YOUR_API_KEY in src/background/index.js
+
+## Demo
+[./demos/demo-latest.mp4]
